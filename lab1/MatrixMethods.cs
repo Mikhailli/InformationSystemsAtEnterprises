@@ -3,8 +3,7 @@ using static Int32;
 
 public static class MatrixMethods
 {
-    public static void MultiplyMatrix(List<List<int>> matrix, List<List<int>> anotherMatrix, ref int[] to, int count,
-        ref List<List<int>> matrixToSum, ref int something)
+    public static void MultiplyMatrix(List<List<int>> matrix, List<List<int>> anotherMatrix, ref int[] to, int count)
     {
         var matrixDimension = matrix.Count;
         
@@ -31,23 +30,13 @@ public static class MatrixMethods
             
             newMatrix.Add(line);
         }
-        
-        for (var i = 0; i < matrixDimension; i++)
-        {
-            for (var j = 0; j < matrixDimension; j++)
-            {
-                matrixToSum[i][j] += newMatrix[i][j];
-            }
-        }
 
         count++;
-        something = count;
-        WriteMatrix(newMatrix);
 
         if (newMatrix.Any(l => l.Any(value => value != 0)))
         {
             Console.WriteLine();
-            MultiplyMatrix(matrix, newMatrix, ref to, count, ref matrixToSum, ref something);
+            MultiplyMatrix(matrix, newMatrix, ref to, count);
         }
         else
         {
@@ -90,31 +79,11 @@ public static class MatrixMethods
         Console.ResetColor();
         Console.WriteLine();
     }
-    
-    public static void CheckMatrix(List<List<int>> matrix)
+
+    public static List<List<int>> FillMatrix(int matrixDimension, out List<WorkTime> workTimes)
     {
-        var matrixDimension = matrix.Count;
-
-        var ways = new List<int>();
-
-        for (var i = 0; i < matrixDimension; i++)
-        {
-            for (var j = 0; j < matrixDimension; j++)
-            {
-                if (matrix[i][j] == 1)
-                {
-                    ways.Add(j);
-                    CheckElement(j, matrixDimension, matrix, ref ways);
-                    ways.Clear();
-                }
-            }
-        }
+        workTimes = new List<WorkTime>();
         
-        Console.WriteLine("Исходная матрица корректна");
-    }
-
-    public static List<List<int>> FillMatrix(int matrixDimension)
-    {
         var matrix = new List<List<int>>();
         for (var i = 0; i < matrixDimension; i++)
         {
@@ -123,7 +92,7 @@ public static class MatrixMethods
     
             for (var j = 0; j < matrixDimension; j++)
             {
-                Console.Write($"Введите значение элемента [{i};{j}]: ");
+                Console.Write($"Введите время работы [{i + 1};{j + 1}]: ");
                 if (TryParse(Console.ReadLine(), out var convertedValue))
                 {
                     value = convertedValue;
@@ -131,13 +100,13 @@ public static class MatrixMethods
         
                 ArgumentNullException.ThrowIfNull(value);
 
-                if (value != 0 && value != 1)
+                line.Add(value.Value != 0 ? 1 : 0);
+
+                if (value.Value != 0)
                 {
-                    throw new Exception("Значения в матрице могут быть только 0 или 1");
+                    workTimes.Add(new WorkTime(i + 1, j + 1, value.Value));
                 }
-        
-                line.Add(value.Value);
-        
+                
                 Console.WriteLine();
             }
     
@@ -145,32 +114,5 @@ public static class MatrixMethods
         }
 
         return matrix;
-    }
-
-    public static void AddLine(string? text = null)
-    {
-        if (text is null)
-        {
-            Console.WriteLine();
-        }
-        
-        Console.WriteLine(text);
-    }
-    
-    private static void CheckElement(int rowNumber, int matrixDimension, List<List<int>> matrix, ref List<int> ways)
-    {
-        for (var i = 0; i < matrixDimension; i++)
-        {
-            if (matrix[rowNumber][i] == 1)
-            {
-                if (ways.Contains(i))
-                {
-                    throw new Exception("Граф, построенный по исходной матрице закольцован");
-                }
-                
-                ways.Add(i);
-                CheckElement(i, matrixDimension, matrix, ref ways);
-            }
-        }
     }
 }
