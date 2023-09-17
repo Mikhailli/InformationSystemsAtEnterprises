@@ -57,7 +57,6 @@ for (var i = 0; i < matrixDimension; i++)
         Console.Write($"{i + 1} ");
     }
 }
-Console.WriteLine();
 
 var to = Enumerable.Repeat(-1, matrixDimension.Value).ToArray();
 
@@ -87,3 +86,12 @@ foreach (var line in eventTable.EventTableLines)
     Console.WriteLine(line);
 }
 Console.WriteLine();
+
+var criticalWay = table.Lines.Where(_ => _.PCHP == _.ПCHP).OrderBy(_ => _.PCHP).Select(_ => _.Work).ToList();
+Console.Write("Критический путь: ");
+for (var i = 0; i < criticalWay.Count; i++)
+{
+    Console.Write(i < criticalWay.Count - 1 
+        ? $"{criticalWay[i]}->" 
+        : $"{criticalWay[i]}");
+}
