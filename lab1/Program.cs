@@ -87,11 +87,15 @@ foreach (var line in eventTable.EventTableLines)
 }
 Console.WriteLine();
 
-var criticalWay = table.Lines.Where(_ => _.PCHP == _.ПCHP).OrderBy(_ => _.PCHP).Select(_ => _.Work).ToList();
+var criticalWay = table.Lines.Where(_ => _.PCHP == _.ПCHP).OrderBy(_ => _.PCHP).ToList();
+var criticalWayLength =
+    table.Lines.Where(_ => _.PCHP == _.ПCHP).OrderBy(_ => _.PCHP).Select(_ => _.WorkTime.Time).Sum();
+Console.Write($"Длина критического пути: {criticalWayLength}");
+Console.WriteLine();
 Console.Write("Критический путь: ");
 for (var i = 0; i < criticalWay.Count; i++)
 {
     Console.Write(i < criticalWay.Count - 1 
-        ? $"{criticalWay[i]}->" 
-        : $"{criticalWay[i]}");
+        ? $"{criticalWay[i].WorkTime.StartPoint}->" 
+        : $"{criticalWay[i].Work.Replace("_", "->")}");
 }
